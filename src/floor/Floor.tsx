@@ -42,11 +42,12 @@ export class Floor {
                     return true;
                 }
             }
+
             return false;
-        } catch (error) {
+        } catch (error){
             console.error('Error checking elevator status:', error);
             return false;
-            
+
         }
     }
     
