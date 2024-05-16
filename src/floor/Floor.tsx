@@ -46,6 +46,7 @@ export class Floor {
         } catch (error) {
             console.error('Error checking elevator status:', error);
             return false;
+            
         }
     }
     
