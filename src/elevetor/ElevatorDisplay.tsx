@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import eleImg from '../assets/elv.png';
 import '../building/BuildingDisplay.css';
-import { Elevator } from './Elevetor'; // וודא שהקובץ והמחלקה Elevator מיובאים כאן
+import { Elevator } from './Elevetor';
 
 interface Props {
   elevators: Elevator[];
 }
 
 class ElevatorDisplay extends Component<Props> {
-  
+
   moveElevatorToFloor(floor: number): void {
     const { elevators } = this.props;
-    const elevator = elevators[floor]; 
-    elevator.moveToFloor(floor);
+    const elevator = elevators.find(e => e.currentFloor !== floor); // מצא את המעלית הזמינה הקרובה ביותר
+    if (elevator) {
+      elevator.call(floor);
+    }
   }
 
   render() {
@@ -30,9 +31,9 @@ class ElevatorDisplay extends Component<Props> {
             <img
               id={`elevator-${index}`}
               className="elevator-img"
-              src={eleImg}
+              src='./elv.png'
               alt={`Elevator ${index}`}
-              style={{ top: `${elevator.currentFloor * 47}px` }}
+              style={{ '--elevator-translate-y': `${elevator.currentFloor * -110}px` } as React.CSSProperties} // שימוש במשתנה CSS
             />
           </div>
         ))}

@@ -17,6 +17,7 @@ class BuildingDisplay extends Component<Props> {
     }
     this.forceUpdate(); // Trigger re-render to update elevator positions
   };
+  
 
   render(): ReactNode {
     const { floors, elevators } = this.props.building;

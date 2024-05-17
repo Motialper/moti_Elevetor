@@ -3,18 +3,18 @@ export class Elevator {
     currentFloor: number;
     destinationFloors: number[];
     numFloors: number;
-    isBusy: boolean; // מאפיין חדש שמציין אם המעלית עסוקה
+    isBusy: boolean;
 
     constructor(number: number, numFloors: number) {
         this.number = number;
         this.currentFloor = 1;
         this.destinationFloors = [];
         this.numFloors = numFloors;
-        this.isBusy = false; // מאתחל את המאפיין כלא עסוק
+        this.isBusy = false;
     }
 
     call(floor: number): void {
-        if (!this.destinationFloors.includes(floor)) {
+        if (!this.destinationFloors.includes(floor) && !this.isBusy) {
             this.destinationFloors.push(floor);
             this.moveLock();
         }
@@ -23,11 +23,10 @@ export class Elevator {
     moveToFloor(floor: number): void {
         const elevatorElement = document.getElementById(`elevator-${this.number}`);
         if (elevatorElement) {
-            const floorHeight = 47;
-            const topPosition = floorHeight * (this.numFloors - floor);
-            elevatorElement.style.transition = `top 1s ease`;
-            elevatorElement.style.top = `${topPosition}px`;
-            this.currentFloor = floor; // נוסיף עדכון לקומה הנוכחית
+            const floorHeight = 110; // גובה כל קומה בפיקסלים
+            const translateY = floorHeight * (this.numFloors - floor);
+            elevatorElement.style.setProperty('--elevator-translate-y', `${translateY}px`); // השתמש בערך חיובי
+            this.currentFloor = floor; // עדכון הקומה הנוכחית
         }
     }
 
@@ -41,10 +40,9 @@ export class Elevator {
             }
 
             this.isBusy = true; // מסמן שהמעלית עסוקה
-            this.currentFloor = nextFloor;
-            this.moveToFloor(this.currentFloor);
+            this.moveToFloor(nextFloor);
 
-            console.log(`Elevator ${this.number} arrived at floor ${this.currentFloor}`);
+            console.log(`Elevator ${this.number} arrived at floor ${nextFloor}`);
 
             await new Promise(resolve => setTimeout(resolve, 3000)); // ממתין 3 שניות
 
