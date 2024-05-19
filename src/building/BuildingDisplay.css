@@ -2,7 +2,7 @@
   margin: 10px;
   width: 33px;
   transform: translate(-50%, var(--elevator-translate-y, 0)); 
-  transition: transform 1s ease;
+  transition: transform 3s  ease;
 }
 
 .elevator-container{
@@ -71,8 +71,13 @@
   padding: 2px;
   cursor: pointer;
   margin-bottom: 32px;
-
+  transition: background-color 0.5s ease;
 }
+
+.floor-number.active {
+  background-color: #14aa53; 
+}
+
 .floor-divider {
   border: none;
   border-top: 6px solid black;

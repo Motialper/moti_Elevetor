@@ -2,17 +2,20 @@ import React, { Component } from 'react';
 import '../building/BuildingDisplay.css';
 import { Elevator } from './Elevetor';
 
+
 interface Props {
   elevators: Elevator[];
 }
+// Displays the elevators within the building, including their current positions.
 
 class ElevatorDisplay extends Component<Props> {
 
+  // Moves an elevator to a specified floor
   moveElevatorToFloor(floor: number): void {
     const { elevators } = this.props;
     const elevator = elevators.find(e => e.currentFloor !== floor); 
     if (elevator) {
-      elevator.call(floor);
+      elevator.requestStop(floor);
     }
     this.forceUpdate();
   }
@@ -32,7 +35,8 @@ class ElevatorDisplay extends Component<Props> {
             <img
               id={`elevator-${index}`}
               className="elevator-img"
-              src='elevrtor-moti/src/assets/elv.png'
+              src={require('../assets/elv.png') }
+              
               alt={`Elevator ${index}`}
               style={{ transform: `translateY(${elevator.currentFloor * -110}px)` }}
             />

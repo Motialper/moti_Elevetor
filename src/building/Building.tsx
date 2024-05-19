@@ -1,6 +1,7 @@
 import { Elevator } from "../elevetor/Elevetor";
 import { Floor } from "../floor/Floor";
 
+// Represents a building with multiple floors and elevators.
 export class Building {
   callElevator(floorNumber: number) {
     throw new Error('Method not implemented.');
@@ -16,7 +17,7 @@ export class Building {
     this.floors = Array.from({ length: numFloors }, (_, i) => new Floor(i));
     this.elevators = Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
   }
-
+//  Gets the nearest available elevator to a specified floor
   getNearestElevator(callingFloor: number): Elevator | null {
     let minTime = Infinity;
     let nearestElevator: Elevator | null = null;
@@ -31,12 +32,12 @@ export class Building {
     }
     return nearestElevator;
   }
-
+  // * Calls the nearest available elevator to a specified floor.
   async requestElevator(floorNumber: number): Promise<void> {
     const nearestElevator = this.getNearestElevator(floorNumber);
     if (nearestElevator) {
       try {
-        await nearestElevator.call(floorNumber);
+        await nearestElevator.requestStop(floorNumber);
       } catch (error) {
         console.error(error);
       }

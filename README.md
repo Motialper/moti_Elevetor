@@ -1,46 +1,61 @@
-# Getting Started with Create React App
+Elevator Control System
+Introduction
+This document describes the design of a software system for controlling elevators in a building. The system manages elevator movements, handles floor requests, and provides a user interface for interacting with the elevators.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Classes
+Elevator
+Represents a single elevator in the building.
 
-## Available Scripts
+Properties:
 
-In the project directory, you can run:
+number: The identifier number of the elevator.
+currentFloor: The current floor where the elevator is located.
+destinationFloors: An array of floor numbers representing the destinations of the elevator.
+numFloors: The total number of floors in the building.
+isBusy: Indicates whether the elevator is currently busy with a task.
+Methods:
 
-### `npm start`
+constructor: Initializes the elevator with default properties.
+call: Adds a floor request to the elevator's destination floors if the elevator is available.
+moveToFloor: Moves the elevator to a specified floor.
+processDestinationQueue: Handles the movement of the elevator between destination floors.
+getNextFloor: Returns the next floor in the destination queue.
+Building
+Represents the entire building structure and manages floors and elevators.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Properties:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+numFloors: The total number of floors in the building.
+numElevators: The total number of elevators in the building.
+floors: An array of Floor objects representing the floors in the building.
+elevators: An array of Elevator objects representing the elevators in the building.
+Methods:
 
-### `npm test`
+constructor: Initializes the building with a specified number of floors and elevators.
+getNearestElevator: Finds the nearest available elevator to a specified floor.
+requestElevator: Initiates the process of requesting an elevator from a specified floor.
+Floor
+Represents a single floor in the building.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Properties:
 
-### `npm run build`
+number: The floor number.
+Methods:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+constructor: Initializes the floor with a floor number.
+playArrivalSound: Plays an arrival sound when an elevator arrives at the floor.
+callElevator: Initiates the process of calling an elevator from the floor.
+isElevatorOnFloor: Checks if an elevator is already present on the floor.
+BuildingDisplay
+A React component for displaying the building layout.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+ElevatorDisplay
+A React component for displaying elevators within the building.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+FloorDisplay
+A React component for displaying floors within the building and allowing users to call elevators.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+System Functionality
+Users can request elevators from different floors using the interface provided by the FloorDisplay component.
+The Building class manages the elevator system and handles elevator requests efficiently.
+Elevators move between floors to fulfill requests, and users are notified of elevator arrivals through visual and auditory cues.

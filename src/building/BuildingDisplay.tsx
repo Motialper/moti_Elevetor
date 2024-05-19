@@ -8,8 +8,11 @@ import ElevatorDisplay from '../elevetor/ElevatorDisplay';
 interface Props {
   building: Building;
 }
+//  * Displays the building layout including floors and elevators.
 
 class BuildingDisplay extends Component<Props> {
+  // Calls an elevator from a specified floor.
+
   callElevator = (floorNumber: number) => {
     const { building } = this.props;
     const floorInstance = new Floor(floorNumber); 
@@ -21,7 +24,7 @@ class BuildingDisplay extends Component<Props> {
     const { floors, elevators } = this.props.building;
     return (
       <div className="building-container">
-        <FloorDisplay floors={floors} callElevator={this.callElevator} />
+        <FloorDisplay floors={floors} callElevator={this.callElevator} elevators={elevators}/>
         <ElevatorDisplay elevators={elevators} />
       </div>
     );
