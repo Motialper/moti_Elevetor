@@ -2,6 +2,9 @@ import { Elevator } from "../elevetor/Elevetor";
 import { Floor } from "../floor/Floor";
 
 export class Building {
+  callElevator(floorNumber: number) {
+    throw new Error('Method not implemented.');
+  }
   numFloors: number;
   numElevators: number;
   floors: Floor[];
@@ -18,7 +21,7 @@ export class Building {
     let minTime = Infinity;
     let nearestElevator: Elevator | null = null;
     for (const elevator of this.elevators) {
-      if (!elevator.isBusy) { // רק מעליות שאינן עסוקות נלקחות בחשבון
+      if (!elevator.isBusy) { 
         let time = Math.abs(elevator.currentFloor - callingFloor);
         if (time < minTime) {
           minTime = time;

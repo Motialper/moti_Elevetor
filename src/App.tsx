@@ -11,7 +11,11 @@ class App extends Component {
       super(props);
       this.buildings = [
         BuildingFactory.createBuilding(15, 3), 
-        BuildingFactory.createBuilding(5, 3)
+        BuildingFactory.createBuilding(5, 3),
+          BuildingFactory.createBuilding(5, 3),
+          BuildingFactory.createBuilding(5, 3)
+
+
       ]; 
     }
   
@@ -22,7 +26,9 @@ class App extends Component {
           <div className="buildings-container">
             {this.buildings.map((building, index) => (
               <BuildingDisplay key={index} building={building} />
+              
             ))}
+            
           </div>
         </div>
     );

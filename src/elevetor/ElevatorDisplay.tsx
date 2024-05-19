@@ -10,10 +10,11 @@ class ElevatorDisplay extends Component<Props> {
 
   moveElevatorToFloor(floor: number): void {
     const { elevators } = this.props;
-    const elevator = elevators.find(e => e.currentFloor !== floor); // מצא את המעלית הזמינה הקרובה ביותר
+    const elevator = elevators.find(e => e.currentFloor !== floor); 
     if (elevator) {
       elevator.call(floor);
     }
+    this.forceUpdate();
   }
 
   render() {
@@ -31,9 +32,9 @@ class ElevatorDisplay extends Component<Props> {
             <img
               id={`elevator-${index}`}
               className="elevator-img"
-              src='./elv.png'
+              src='elevrtor-moti/src/assets/elv.png'
               alt={`Elevator ${index}`}
-              style={{ '--elevator-translate-y': `${elevator.currentFloor * -110}px` } as React.CSSProperties} // שימוש במשתנה CSS
+              style={{ transform: `translateY(${elevator.currentFloor * -110}px)` }}
             />
           </div>
         ))}

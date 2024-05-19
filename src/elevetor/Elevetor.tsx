@@ -7,7 +7,7 @@ export class Elevator {
 
     constructor(number: number, numFloors: number) {
         this.number = number;
-        this.currentFloor = 1;
+        this.currentFloor = 0;
         this.destinationFloors = [];
         this.numFloors = numFloors;
         this.isBusy = false;
@@ -23,10 +23,10 @@ export class Elevator {
     moveToFloor(floor: number): void {
         const elevatorElement = document.getElementById(`elevator-${this.number}`);
         if (elevatorElement) {
-            const floorHeight = 110; // גובה כל קומה בפיקסלים
+            const floorHeight = 110; 
             const translateY = floorHeight * (this.numFloors - floor);
-            elevatorElement.style.setProperty('--elevator-translate-y', `${translateY}px`); // השתמש בערך חיובי
-            this.currentFloor = floor; // עדכון הקומה הנוכחית
+            elevatorElement.style.setProperty('--elevator-translate-y', `${translateY}px`); 
+            this.currentFloor = floor; 
         }
     }
 
@@ -39,15 +39,14 @@ export class Elevator {
                 return this.moveLock();
             }
 
-            this.isBusy = true; // מסמן שהמעלית עסוקה
+            this.isBusy = true; 
             this.moveToFloor(nextFloor);
 
             console.log(`Elevator ${this.number} arrived at floor ${nextFloor}`);
 
-            await new Promise(resolve => setTimeout(resolve, 3000)); // ממתין 3 שניות
-
+            await new Promise(resolve => setTimeout(resolve, 3000)); 
             this.destinationFloors.shift();
-            this.isBusy = false; // מסמן שהמעלית שוב זמינה
+            this.isBusy = false; 
             this.moveLock();
         }
     }

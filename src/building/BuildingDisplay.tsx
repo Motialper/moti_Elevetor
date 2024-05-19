@@ -1,24 +1,22 @@
 import React, { Component, ReactNode } from 'react';
-
-import ElevatorDisplay from '../elevetor/ElevatorDisplay';
+import '../building/BuildingDisplay.css';
 import { Building } from './Building';
 import FloorDisplay from '../floor/FloorDisplay';
+import { Floor } from '../floor/Floor';
+import ElevatorDisplay from '../elevetor/ElevatorDisplay';
 
 interface Props {
   building: Building;
 }
+
 class BuildingDisplay extends Component<Props> {
   callElevator = (floorNumber: number) => {
-    const nearestElevator = this.props.building.getNearestElevator(floorNumber);
-    if (nearestElevator) {
-      nearestElevator.call(floorNumber);
-    } else {
-      console.log('No available elevators at the moment.');
-    }
-    this.forceUpdate(); // Trigger re-render to update elevator positions
+    const { building } = this.props;
+    const floorInstance = new Floor(floorNumber); 
+    floorInstance.callElevator(floorNumber, building); 
+    this.forceUpdate(); 
   };
   
-
   render(): ReactNode {
     const { floors, elevators } = this.props.building;
     return (

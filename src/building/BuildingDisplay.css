@@ -1,7 +1,7 @@
 .elevator-img {
   margin: 10px;
   width: 33px;
-  transform: translate(-50%, var(--elevator-translate-y, 0)); /* מרכז לרוחב ומשתמש במשתנה CSS עבור המיקום האנכי */
+  transform: translate(-50%, var(--elevator-translate-y, 0)); 
   transition: transform 1s ease;
 }
 
@@ -15,7 +15,7 @@
 
 .elevator-wrapper {
   position: relative;
-  height: 50px; /* גובה כל קומה */
+  height: 50px; 
 }
 
 .building-container {

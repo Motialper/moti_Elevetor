@@ -12,13 +12,6 @@ interface Props {
 }
 
 class FloorDisplay extends Component<Props> {
-  // playArrivalSound() {
-   
-  //     const audio = new Audio('../assets/ding.mp3');
-  //     audio.play();
-  //     console.log('ping', audio)
-  // }
-
   render(): ReactNode {
     const { floors, callElevator } = this.props;
 
@@ -31,8 +24,7 @@ class FloorDisplay extends Component<Props> {
         {floors.map((floor, index) => (
           <div key={index} className="floor">
             <button className="floor-number" onClick={() => {
-              // this.playArrivalSound(); 
-              callElevator(floor.number);
+              callElevator(floor.number); 
             }}>
               {floor.number}
             </button>
