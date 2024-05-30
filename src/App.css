@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+}
+
+.buildings-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
+.building-container {
+  margin: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
