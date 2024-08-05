@@ -1,0 +1,10 @@
+[
+  {
+    "numOfFloor": 10,
+    "numOfElevator": 3
+  },
+  {
+    "numOfFloor": 5,
+    "numOfElevator": 3
+  }
+]

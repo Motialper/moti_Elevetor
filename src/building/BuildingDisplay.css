@@ -2,7 +2,7 @@
   margin: 10px;
   width: 33px;
   transform: translate(-50%, var(--elevator-translate-y, 0)); 
-  transition: transform 3s  ease;
+  transition: transform 2s  ease;
 }
 
 .elevator-container{
@@ -24,7 +24,17 @@
   height: 100%;
   align-items: flex-end;
 }
-
+ .timer{
+  padding: 3px;
+    border-radius: 5px;
+    position: relative;
+    bottom: 53px;
+    left: 163px;
+    font-size: 14px;
+    width: 64px;
+    color: black;
+    background-color: #ddd6d6;
+ }
 
 .floor {
   flex-direction: row;
