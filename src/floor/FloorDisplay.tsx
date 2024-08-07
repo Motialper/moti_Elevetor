@@ -5,10 +5,11 @@ import { Floor } from './Floor';
 import { Elevator } from '../elevetor/Elevetor';
 import { ElevatorController } from '../elevetor/ElevatorController';
 
+
 interface Props {
   floors: Floor[];
-  callElevator: (floorNumber: number) => void;
   elevators: Elevator[];
+  callElevator: (floorNumber: number) => void; // פונקציה בממשק Props
   elevatorController: ElevatorController;
 }
 
@@ -22,62 +23,27 @@ class FloorDisplay extends Component<Props, State> {
   };
 
   handleCallElevator = (floorNumber: number) => {
-    const { callElevator, elevators } = this.props;
-    if (this.isElevatorAlreadyOnFloor(floorNumber)) {
-      console.log(`Elevator is already present or en route to floor ${floorNumber}`);
-      return;
-    }
-
-    const closestElevator = this.findNearestElevator(floorNumber);
-    const timeToArrival = this.calculateTravelTime(closestElevator, floorNumber);
-    const timerEnd = new Date();
-    timerEnd.setSeconds(timerEnd.getSeconds() + timeToArrival);
-
-    callElevator(floorNumber);
-
-    this.setState((prevState) => ({
-      activeFloors: [...prevState.activeFloors, { floorNumber, timerEnd }],
-    }));
-
-    setTimeout(() => {
+    const { elevatorController } = this.props;
+    const nearestElevator = elevatorController.findNearestAvailableElevator(floorNumber);
+    if (nearestElevator) {
+      const timeToArrival = nearestElevator.calculateTimeToFloor(floorNumber);
+      elevatorController.callElevator(floorNumber);
+  
+      const timerEnd = new Date();
+      timerEnd.setMilliseconds(timerEnd.getMilliseconds() + timeToArrival); // חישוב הזמן הנכון במילישניות
+  
       this.setState((prevState) => ({
-        activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
+        activeFloors: [...prevState.activeFloors, { floorNumber, timerEnd }],
       }));
-    }, timeToArrival * 1000);
-  };
-
-  isElevatorAlreadyOnFloor = (floorNumber: number): boolean => {
-    const { elevators } = this.props;
-    return elevators.some(elevator => elevator.currentFloor === floorNumber || elevator.destinationFloors.includes(floorNumber));
-  }
-
-  findNearestElevator = (floorNumber: number): Elevator => {
-    const { elevators } = this.props;
-    let nearestElevator = elevators[0];
-    let minTime = Infinity;
-
-    for (const elevator of elevators) {
-      const time = this.calculateTravelTime(elevator, floorNumber);
-      if (time < minTime) {
-        nearestElevator = elevator;
-        minTime = time;
-      }
-    }
-
-    return nearestElevator;
-  };
-
-  calculateTravelTime = (elevator: Elevator, floorNumber: number): number => {
-    if (elevator.isBusy) {
-      let time = elevator.destinationFloors.length
-        ? elevator.calculateTimeToFloor(floorNumber)
-        : Math.abs(elevator.currentFloor - floorNumber) * 2000;
-      return time / 1000; // Convert to seconds
-    } else {
-      return Math.abs(elevator.currentFloor - floorNumber) * 1100 / 1000; // Convert to seconds
+  
+      setTimeout(() => {
+        this.setState((prevState) => ({
+          activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
+        }));
+      }, timeToArrival);
     }
   };
-
+  
   render() {
     const { floors } = this.props;
     const { activeFloors } = this.state;

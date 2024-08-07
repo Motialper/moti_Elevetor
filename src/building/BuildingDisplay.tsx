@@ -21,7 +21,7 @@ class BuildingDisplay extends Component<Props, State> {
     const floor = building.floors.find(f => f.number === floorNumber);
     if (floor) {
       this.setState({ currentCall: { floorNumber, building } });
-      floor.callElevator(floorNumber);
+      floor.callElevator();
     }
   };
 

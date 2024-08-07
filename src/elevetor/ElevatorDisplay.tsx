@@ -3,29 +3,50 @@ import '../building/BuildingDisplay.css';
 import { Elevator } from './Elevetor';
 import { ElevatorController } from './ElevatorController';
 
+// יבוא התמונה בצורה סטטית
+import elevatorImage from '../assets/elv.png';
+
 interface Props {
   elevators: Elevator[];
   elevatorController: ElevatorController;
 }
 
-class ElevatorDisplay extends Component<Props> {
+interface State {
+  elevators: Elevator[];
+}
+
+class ElevatorDisplay extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    props.elevatorController.setStateChangeCallback(() => {
-      this.forceUpdate();
-    });
+    // התחלת המצב של המעליות מהפרופס
+    this.state = {
+      elevators: props.elevators
+    };
   }
 
+  componentDidMount() {
+    this.props.elevatorController.setStateChangeCallback(this.handleStateChange);
+  }
+
+  componentWillUnmount() {
+    this.props.elevatorController.setStateChangeCallback(() => {});
+  }
+
+  handleStateChange = () => {
+    this.setState({ elevators: this.props.elevatorController.getElevators() });
+  };
+
   render() {
-    const { elevators } = this.props;
+    const { elevators } = this.state;
+
     return (
       <div className="elevator-container">
         {elevators.map((elevator, index) => (
-          <div key={index}>
+          <div key={index} className="elevator-wrapper">
             <img
               id={`elevator-${index}`}
               className="elevator-img"
-              src={require('../assets/elv.png')}
+              src={elevatorImage}
               alt={`Elevator ${index}`}
               style={{ transform: `translateY(${elevator.currentFloor * -110}px)` }}
             />

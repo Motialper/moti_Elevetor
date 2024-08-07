@@ -14,10 +14,10 @@ export class Building {
     this.numElevators = numElevators;
 
     // יצירת המעליות
-    this.elevators = Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors, null));
+    this.elevators = Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
 
     // יצירת הבקר למעליות
-    this.elevatorController = new ElevatorController(this, this.elevators);
+    this.elevatorController = new ElevatorController( this.elevators);
 
     // עדכון כל מעלית עם הבקר
     this.elevators.forEach(elevator => elevator.setController(this.elevatorController));

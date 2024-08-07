@@ -10,9 +10,13 @@ export class Floor {
     this.elevatorController = elevatorController;
   }
 
-  callElevator(floorNumber: number) {
+  callElevator(): void {
     try {
-      this.elevatorController.requestStop(floorNumber);
+      if (!this.isElevatorOnFloor(this.number)) {
+        this.elevatorController.callElevator(this.number);
+      } else {
+        console.log(`Elevator is already on floor ${this.number}`);
+      }
     } catch (error) {
       console.error('Error calling elevator:', error);
     }

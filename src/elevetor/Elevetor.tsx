@@ -4,21 +4,22 @@ export class Elevator {
   public currentFloor: number;
   public destinationFloors: number[];
   public isBusy: boolean;
+  private elevatorController: ElevatorController | null;
 
   constructor(
     public number: number,
     public numFloors: number,
-    private elevatorController: ElevatorController | null
+    elevatorController: ElevatorController | null = null
   ) {
     this.currentFloor = 0;
     this.destinationFloors = [];
     this.isBusy = false;
+    this.elevatorController = elevatorController;
   }
 
   setController(elevatorController: ElevatorController) {
     this.elevatorController = elevatorController;
   }
-
 
   requestStop(floor: number): void {
     if (floor < 0 || floor >= this.numFloors) {
@@ -26,6 +27,7 @@ export class Elevator {
       return;
     }
     if (!this.destinationFloors.includes(floor)) {
+      console.log(`Elevator ${this.number} received request to stop at floor ${floor}`);
       this.destinationFloors.push(floor);
       if (!this.isBusy) {
         this.executeNextStep();
@@ -50,18 +52,17 @@ export class Elevator {
   }
 
   calculateTimeToFloor(floor: number): number {
-    let totalTime = 0;
-    let currentFloor = this.currentFloor;
-  
     if (this.isBusy) {
-      // Time to travel to all destination floors
+      let time = 0;
+      let currentFloor = this.currentFloor;
       for (const dest of this.destinationFloors) {
-        totalTime += Math.abs(dest - currentFloor) * 500; 
-        currentFloor = dest; 
+        time += Math.abs(dest - currentFloor) * 2000;
+        currentFloor = dest;
       }
+      time += Math.abs(floor - currentFloor) * 500;
+      return time;
+    } else {
+      return Math.abs(this.currentFloor - floor) * 2000;
     }
-
-    return totalTime;
   }
-  
 }

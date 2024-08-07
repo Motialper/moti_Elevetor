@@ -1,66 +1,75 @@
-import { Building } from "../building/Building";
-import { Elevator } from "./Elevetor";
+import { Elevator } from './Elevetor';
 
-interface ElevatorRequestService {
-  requestStop(floorNumber: number): void;
-}
-
-export class ElevatorController implements ElevatorRequestService {
+export class ElevatorController {
+  private elevators: Elevator[];
   private requestQueue: number[] = [];
   private stateChangeCallback: (() => void) | null = null;
 
-  constructor(private building: Building, private elevators: Elevator[]) {}
-
-  getElevators(): Elevator[] {
-    return this.elevators;
+  constructor(elevators: Elevator[]) {
+    this.elevators = elevators;
+    this.elevators.forEach(elevator => elevator.setController(this));
   }
 
-  requestStop(floorNumber: number) {
-    const nearestElevator = this.getNearestElevator(floorNumber);
-    if (nearestElevator) {
-      nearestElevator.requestStop(floorNumber);
+  callElevator(floorNumber: number): void {
+    if (this.elevators.some(elevator => elevator.destinationFloors.includes(floorNumber))) {
+      console.log(`Elevator is already moving to floor ${floorNumber}`);
+      return;
+    }
+    
+    const availableElevator = this.findNearestAvailableElevator(floorNumber);
+    if (availableElevator) {
+      console.log(`Dispatching elevator ${availableElevator.number} to floor ${floorNumber}`);
+      availableElevator.requestStop(floorNumber);
     } else {
-      console.log('No available elevators at the moment. Adding to the queue.');
+      console.log(`No available elevator for floor ${floorNumber}. Adding to queue.`);
       this.requestQueue.push(floorNumber);
     }
   }
 
-  getNearestElevator(callingFloor: number): Elevator | null {
-    let minTime = Infinity;
+  public findNearestAvailableElevator(floorNumber: number): Elevator | null {
     let nearestElevator: Elevator | null = null;
+    let minTime = Infinity;
+
     for (const elevator of this.elevators) {
-      if (!elevator.isBusy) {
-        let time = Math.abs(elevator.currentFloor - callingFloor);
-        if (time < minTime) {
-          minTime = time;
+      if (!elevator.isBusy || elevator.destinationFloors.includes(floorNumber)) {
+        const timeToFloor = elevator.calculateTimeToFloor(floorNumber);
+        if (timeToFloor < minTime) {
+          minTime = timeToFloor;
           nearestElevator = elevator;
         }
       }
     }
+
     return nearestElevator;
+  }
+
+  notifyElevatorStateChange(): void {
+    if (this.stateChangeCallback) {
+      console.log("State change callback invoked");
+      this.stateChangeCallback();
+    }
   }
 
   handleNextRequest(): void {
     if (this.requestQueue.length > 0) {
       const nextRequest = this.requestQueue.shift();
       if (nextRequest !== undefined) {
-        const nearestElevator = this.getNearestElevator(nextRequest);
+        console.log(`Handling next request for floor ${nextRequest}`);
+        const nearestElevator = this.findNearestAvailableElevator(nextRequest);
         if (nearestElevator) {
           nearestElevator.requestStop(nextRequest);
         } else {
-          this.requestQueue.push(nextRequest); 
+          this.requestQueue.push(nextRequest);
         }
       }
     }
   }
 
-  notifyElevatorStateChange() {
-    if (this.stateChangeCallback) {
-      this.stateChangeCallback();
-    }
+  setStateChangeCallback(callback: () => void): void {
+    this.stateChangeCallback = callback;
   }
 
-  setStateChangeCallback(callback: () => void) {
-    this.stateChangeCallback = callback;
+  getElevators(): Elevator[] {
+    return this.elevators;
   }
 }
