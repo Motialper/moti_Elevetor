@@ -59,7 +59,7 @@ export class Elevator {
         time += Math.abs(dest - currentFloor) * 2000;
         currentFloor = dest;
       }
-      time += Math.abs(floor - currentFloor) * 500;
+      time += Math.abs(floor - currentFloor) *2000;
       return time;
     } else {
       return Math.abs(this.currentFloor - floor) * 2000;
