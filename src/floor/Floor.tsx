@@ -9,8 +9,8 @@ export class Floor {
     this.floorButton = new FloorButton(number);
     this.elevatorController = elevatorController;
   }
-
-  callElevator(): void {
+  // Initiates a request for an elevator to come to this floor
+  requestElevatorService(): void {
     try {
       if (!this.isElevatorOnFloor(this.number)) {
         this.elevatorController.callElevator(this.number);

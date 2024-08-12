@@ -18,7 +18,7 @@ interface State {
 class ElevatorDisplay extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    // התחלת המצב של המעליות מהפרופס
+  
     this.state = {
       elevators: props.elevators
     };
@@ -48,7 +48,7 @@ class ElevatorDisplay extends Component<Props, State> {
               className="elevator-img"
               src={elevatorImage}
               alt={`Elevator ${index}`}
-              style={{ transform: `translateY(${elevator.currentFloor * -110}px)` }}
+              style={{ transform: `translateY(${elevator.currentFloor * -47}px)` }}
             />
           </div>
         ))}

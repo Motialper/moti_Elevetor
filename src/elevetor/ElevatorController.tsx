@@ -7,7 +7,7 @@ export class ElevatorController {
 
   constructor(elevators: Elevator[]) {
     this.elevators = elevators;
-    this.elevators.forEach(elevator => elevator.setController(this));
+    this.elevators.forEach(elevator => elevator.assignController(this));
   }
 
   callElevator(floorNumber: number): void {
@@ -19,7 +19,7 @@ export class ElevatorController {
     const availableElevator = this.findNearestAvailableElevator(floorNumber);
     if (availableElevator) {
       console.log(`Dispatching elevator ${availableElevator.number} to floor ${floorNumber}`);
-      availableElevator.requestStop(floorNumber);
+      availableElevator.addStopRequest(floorNumber);
     } else {
       console.log(`No available elevator for floor ${floorNumber}. Adding to queue.`);
       this.requestQueue.push(floorNumber);
@@ -31,18 +31,19 @@ export class ElevatorController {
     let minTime = Infinity;
 
     for (const elevator of this.elevators) {
-      if (!elevator.isBusy || elevator.destinationFloors.includes(floorNumber)) {
+        const timeToCurrentDestination = elevator.isBusy ? elevator.calculateTimeToFloor(elevator.destinationFloors[0]) : 0;
         const timeToFloor = elevator.calculateTimeToFloor(floorNumber);
-        if (timeToFloor < minTime) {
-          minTime = timeToFloor;
-          nearestElevator = elevator;
+        const totalTime = timeToCurrentDestination + timeToFloor;
+
+        if (totalTime < minTime) {
+            minTime = totalTime;
+            nearestElevator = elevator;
         }
-      }
     }
 
     return nearestElevator;
-  }
-
+}
+// Notifies the system when an elevator's state changes
   notifyElevatorStateChange(): void {
     if (this.stateChangeCallback) {
       console.log("State change callback invoked");
@@ -50,6 +51,7 @@ export class ElevatorController {
     }
   }
 
+  //  Handles the next elevator request in the queue
   handleNextRequest(): void {
     if (this.requestQueue.length > 0) {
       const nextRequest = this.requestQueue.shift();
@@ -57,7 +59,7 @@ export class ElevatorController {
         console.log(`Handling next request for floor ${nextRequest}`);
         const nearestElevator = this.findNearestAvailableElevator(nextRequest);
         if (nearestElevator) {
-          nearestElevator.requestStop(nextRequest);
+          nearestElevator.addStopRequest(nextRequest);
         } else {
           this.requestQueue.push(nextRequest);
         }

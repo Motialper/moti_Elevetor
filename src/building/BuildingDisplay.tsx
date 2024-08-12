@@ -4,24 +4,18 @@ import { Building } from '../building/Building';
 import FloorDisplay from '../floor/FloorDisplay';
 import ElevatorDisplay from '../elevetor/ElevatorDisplay';
 
-
 interface Props {
   building: Building;
 }
 
-interface State {
-  currentCall: { floorNumber: number, building: Building } | null;
-}
+class BuildingDisplay extends Component<Props> {
 
-class BuildingDisplay extends Component<Props, State> {
-  state: State = { currentCall: null };
-
-  callElevator = (floorNumber: number) => {
+  // Calls an elevator to a specific floor
+  handleElevatorCall = (floorNumber: number) => {
     const { building } = this.props;
     const floor = building.floors.find(f => f.number === floorNumber);
     if (floor) {
-      this.setState({ currentCall: { floorNumber, building } });
-      floor.callElevator();
+      floor.requestElevatorService();
     }
   };
 
@@ -31,7 +25,7 @@ class BuildingDisplay extends Component<Props, State> {
       <div className="building-container">
         <FloorDisplay
           floors={floors}
-          callElevator={this.callElevator}
+          callElevator={this.handleElevatorCall} // להעביר את הפונקציה לתוך FloorDisplay
           elevators={elevators}
           elevatorController={elevatorController}
         />

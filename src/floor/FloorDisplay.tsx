@@ -5,11 +5,10 @@ import { Floor } from './Floor';
 import { Elevator } from '../elevetor/Elevetor';
 import { ElevatorController } from '../elevetor/ElevatorController';
 
-
 interface Props {
   floors: Floor[];
   elevators: Elevator[];
-  callElevator: (floorNumber: number) => void; // פונקציה בממשק Props
+  callElevator: (floorNumber: number) => void;
   elevatorController: ElevatorController;
 }
 
@@ -22,28 +21,36 @@ class FloorDisplay extends Component<Props, State> {
     activeFloors: [],
   };
 
+  // Handles the request to call an elevator to a specified floor
   handleCallElevator = (floorNumber: number) => {
     const { elevatorController } = this.props;
     const nearestElevator = elevatorController.findNearestAvailableElevator(floorNumber);
+
     if (nearestElevator) {
       const timeToArrival = nearestElevator.calculateTimeToFloor(floorNumber);
+
+      // Call the elevator immediately
       elevatorController.callElevator(floorNumber);
-  
+
       const timerEnd = new Date();
-      timerEnd.setMilliseconds(timerEnd.getMilliseconds() + timeToArrival); // חישוב הזמן הנכון במילישניות
-  
+      timerEnd.setMilliseconds(timerEnd.getMilliseconds() + timeToArrival);
+
+      // Update state to show the timer
       this.setState((prevState) => ({
         activeFloors: [...prevState.activeFloors, { floorNumber, timerEnd }],
       }));
-  
+
+      // Remove the floor from the active list after the timer expires
       setTimeout(() => {
         this.setState((prevState) => ({
           activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
         }));
       }, timeToArrival);
+    } else {
+      console.warn('No available elevator');
     }
   };
-  
+
   render() {
     const { floors } = this.props;
     const { activeFloors } = this.state;
@@ -66,7 +73,6 @@ class FloorDisplay extends Component<Props, State> {
             <div className="floor-divider"></div>
           </div>
         ))}
-        <div className="floor-divider"></div>
       </div>
     );
   }
@@ -76,16 +82,15 @@ interface TimerProps {
   expiryTimestamp: Date;
 }
 
+// Timer component to show countdown
 const Timer: React.FC<TimerProps> = ({ expiryTimestamp }) => {
   const { seconds, minutes, hours } = useTimer({ expiryTimestamp, onExpire: () => console.warn('Timer expired') });
 
   return (
-    <div>
-      <div className="timer">
-        {hours > 0 && <span>{hours.toString().padStart(2, '0')}:</span>}
-        <span>{minutes.toString().padStart(2, '0')}:</span>
-        <span>{seconds.toString().padStart(2, '0')}</span>
-      </div>
+    <div className="timer">
+      {hours > 0 && <span>{hours.toString().padStart(2, '0')}:</span>}
+      <span>{minutes.toString().padStart(2, '0')}:</span>
+      <span>{seconds.toString().padStart(2, '0')}</span>
     </div>
   );
 };

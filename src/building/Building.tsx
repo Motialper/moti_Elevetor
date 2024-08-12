@@ -9,20 +9,20 @@ export class Building {
   elevators: Elevator[];
   elevatorController: ElevatorController;
 
-  constructor(numFloors: number, numElevators: number) {
-    this.numFloors = numFloors;
-    this.numElevators = numElevators;
+ constructor(numFloors: number, numElevators: number) {
+  this.numFloors = numFloors;
+  this.numElevators = numElevators;
+  this.elevators = this.createElevators(numElevators, numFloors);
+  this.elevatorController = new ElevatorController(this.elevators);
+  this.floors = this.createFloors(numFloors, this.elevatorController);
+}
 
-    // יצירת המעליות
-    this.elevators = Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
+private createElevators(numElevators: number, numFloors: number): Elevator[] {
+  return Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
+}
 
-    // יצירת הבקר למעליות
-    this.elevatorController = new ElevatorController( this.elevators);
+private createFloors(numFloors: number, elevatorController: ElevatorController): Floor[] {
+  return Array.from({ length: numFloors }, (_, i) => new Floor(i, elevatorController));
+}
 
-    // עדכון כל מעלית עם הבקר
-    this.elevators.forEach(elevator => elevator.setController(this.elevatorController));
-
-    // יצירת הקומות
-    this.floors = Array.from({ length: numFloors }, (_, i) => new Floor(i, this.elevatorController));
-  }
 }

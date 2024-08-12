@@ -17,11 +17,11 @@ export class Elevator {
     this.elevatorController = elevatorController;
   }
 
-  setController(elevatorController: ElevatorController) {
+  assignController(elevatorController: ElevatorController) {
     this.elevatorController = elevatorController;
   }
 
-  requestStop(floor: number): void {
+  addStopRequest(floor: number): void {
     if (floor < 0 || floor >= this.numFloors) {
       console.error(`Invalid floor request: Floor ${floor} is outside the building range.`);
       return;
@@ -30,39 +30,58 @@ export class Elevator {
       console.log(`Elevator ${this.number} received request to stop at floor ${floor}`);
       this.destinationFloors.push(floor);
       if (!this.isBusy) {
-        this.executeNextStep();
+        this.processNextDestination();
       }
     }
   }
 
-  private async executeNextStep(): Promise<void> {
+  private async processNextDestination(): Promise<void> {
     if (this.destinationFloors.length > 0 && !this.isBusy) {
       this.isBusy = true;
       const nextFloor = this.destinationFloors[0];
-      console.log(`Elevator ${this.number} is moving to floor ${nextFloor}`);
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      const timeToMove = Math.abs(nextFloor - this.currentFloor) * 2000; 
+      
+      // Move the elevator to the next floor
+      await new Promise(resolve => setTimeout(resolve, timeToMove));
+      
+      // Set the current floor to the next floor
       this.currentFloor = nextFloor;
-      console.log(`Elevator ${this.number} arrived at floor ${nextFloor}`);
       this.destinationFloors.shift();
+      
+      // Wait 3 seconds at the current floor if there are more floors to visit
+      if (this.destinationFloors.length > 0) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+      
       this.isBusy = false;
+      
+      // Notify the controller of the state change and handle the next request
       this.elevatorController?.handleNextRequest();
       this.elevatorController?.notifyElevatorStateChange();
-      this.executeNextStep();
+      
+      // Process the next destination
+      this.processNextDestination();
     }
   }
+  
 
   calculateTimeToFloor(floor: number): number {
+    const timePerFloor = 500; // Time to move per floor in milliseconds
+
     if (this.isBusy) {
       let time = 0;
       let currentFloor = this.currentFloor;
+
       for (const dest of this.destinationFloors) {
-        time += Math.abs(dest - currentFloor) * 2000;
+        time += Math.abs(dest - currentFloor) * timePerFloor;
         currentFloor = dest;
       }
-      time += Math.abs(floor - currentFloor) *2000;
+
+      time += Math.abs(floor - currentFloor) * timePerFloor;
       return time;
     } else {
-      return Math.abs(this.currentFloor - floor) * 2000;
+  
+      return Math.abs(this.currentFloor - floor) * timePerFloor;
     }
   }
 }
