@@ -9,7 +9,8 @@ export class Floor {
     this.floorButton = new FloorButton(number);
     this.elevatorController = elevatorController;
   }
-  // Initiates a request for an elevator to come to this floor
+
+//  Initiates a request for an elevator to come to this floor
   requestElevatorService(): void {
     try {
       if (!this.isElevatorOnFloor(this.number)) {
@@ -22,6 +23,7 @@ export class Floor {
     }
   }
 
+  // Checks if any elevator is currently on the specified floor
   isElevatorOnFloor(floorNumber: number): boolean {
     try {
       for (const elevator of this.elevatorController.getElevators()) {

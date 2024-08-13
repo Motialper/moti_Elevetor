@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import BuildingDisplay from './building/BuildingDisplay';
 import { Building } from './building/Building';
 import './App.css';
-import BuildingFactory from './factoryClassass/BuildingFactory';
-
 import buildingData from './config/buildingData.json';
+import BuildingFactory from './factoryClassass/BuildingFactory'
+
+
+interface BuildingData {
+  numOfFloor: number;
+  numOfElevator: number;
+}
 
 class App extends Component {
   buildings: Building[];
@@ -12,7 +17,7 @@ class App extends Component {
   constructor(props: {}) {
     super(props);
 
-    this.buildings = buildingData.map(data =>
+    this.buildings = (buildingData as BuildingData[]).map(data =>
       BuildingFactory.createBuilding(data.numOfFloor, data.numOfElevator)
     );
   }

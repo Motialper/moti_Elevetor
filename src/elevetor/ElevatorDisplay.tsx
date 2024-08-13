@@ -3,7 +3,7 @@ import '../building/BuildingDisplay.css';
 import { Elevator } from './Elevetor';
 import { ElevatorController } from './ElevatorController';
 
-// יבוא התמונה בצורה סטטית
+// Import static image
 import elevatorImage from '../assets/elv.png';
 
 interface Props {
@@ -18,20 +18,24 @@ interface State {
 class ElevatorDisplay extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-  
+
     this.state = {
       elevators: props.elevators
     };
   }
 
+ 
+  //  * Sets up the state change callback when the component mounts.
   componentDidMount() {
     this.props.elevatorController.setStateChangeCallback(this.handleStateChange);
   }
 
+  // Cleans up the state change callback when the component unmounts
   componentWillUnmount() {
     this.props.elevatorController.setStateChangeCallback(() => {});
   }
 
+//  Handles state changes from the elevator controller
   handleStateChange = () => {
     this.setState({ elevators: this.props.elevatorController.getElevators() });
   };

@@ -9,8 +9,8 @@ interface Props {
 }
 
 class BuildingDisplay extends Component<Props> {
-
-  // Calls an elevator to a specific floor
+ 
+  // Handles the call to request an elevator to a specific floor
   handleElevatorCall = (floorNumber: number) => {
     const { building } = this.props;
     const floor = building.floors.find(f => f.number === floorNumber);
@@ -21,11 +21,12 @@ class BuildingDisplay extends Component<Props> {
 
   render(): ReactNode {
     const { floors, elevators, elevatorController } = this.props.building;
+
     return (
       <div className="building-container">
         <FloorDisplay
           floors={floors}
-          callElevator={this.handleElevatorCall} // להעביר את הפונקציה לתוך FloorDisplay
+          callElevator={this.handleElevatorCall} 
           elevators={elevators}
           elevatorController={elevatorController}
         />

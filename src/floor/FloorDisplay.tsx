@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { useTimer } from 'react-timer-hook';
 import '../building/BuildingDisplay.css';
 import { Floor } from './Floor';
 import { Elevator } from '../elevetor/Elevetor';
 import { ElevatorController } from '../elevetor/ElevatorController';
+import TimerDisplay from '../timer/TimerDisplay';
 
 interface Props {
   floors: Floor[];
@@ -17,6 +17,8 @@ interface State {
 }
 
 class FloorDisplay extends Component<Props, State> {
+  private timers: { [key: number]: NodeJS.Timeout } = {};
+
   state: State = {
     activeFloors: [],
   };
@@ -41,15 +43,22 @@ class FloorDisplay extends Component<Props, State> {
       }));
 
       // Remove the floor from the active list after the timer expires
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         this.setState((prevState) => ({
           activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
         }));
       }, timeToArrival);
+
+      this.timers[floorNumber] = timeoutId;
     } else {
       console.warn('No available elevator');
     }
   };
+
+  componentWillUnmount() {
+    // Clean up all timeouts when component unmounts
+    Object.values(this.timers).forEach(clearTimeout);
+  }
 
   render() {
     const { floors } = this.props;
@@ -67,7 +76,7 @@ class FloorDisplay extends Component<Props, State> {
             </button>
             <div className="timer-container">
               {activeFloors.some((f) => f.floorNumber === floor.number) && (
-                <Timer expiryTimestamp={activeFloors.find((f) => f.floorNumber === floor.number)?.timerEnd!} />
+                <TimerDisplay expiryTimestamp={activeFloors.find((f) => f.floorNumber === floor.number)?.timerEnd!} />
               )}
             </div>
             <div className="floor-divider"></div>
@@ -77,22 +86,5 @@ class FloorDisplay extends Component<Props, State> {
     );
   }
 }
-
-interface TimerProps {
-  expiryTimestamp: Date;
-}
-
-// Timer component to show countdown
-const Timer: React.FC<TimerProps> = ({ expiryTimestamp }) => {
-  const { seconds, minutes, hours } = useTimer({ expiryTimestamp, onExpire: () => console.warn('Timer expired') });
-
-  return (
-    <div className="timer">
-      {hours > 0 && <span>{hours.toString().padStart(2, '0')}:</span>}
-      <span>{minutes.toString().padStart(2, '0')}:</span>
-      <span>{seconds.toString().padStart(2, '0')}</span>
-    </div>
-  );
-};
 
 export default FloorDisplay;
