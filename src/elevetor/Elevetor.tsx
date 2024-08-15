@@ -62,7 +62,6 @@ export class Elevator {
       // Notify the controller of the state change
       this.elevatorController?.notifyElevatorStateChange();
       
-      // Handle the next request in the queue
       this.elevatorController?.handleNextRequest();
       
       // Process the next destination if there are still destinations
