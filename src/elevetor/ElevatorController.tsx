@@ -19,7 +19,7 @@ callElevator(floorNumber: number): void {
 
   const availableElevator = this.findNearestAvailableElevator(floorNumber);
   if (availableElevator) {
-    console.log(`Dispatching elevator ${availableElevator.number} to floor ${floorNumber}`);
+   
     availableElevator.addStopRequest(floorNumber);
     
     // Check if the elevator should start immediately
@@ -41,7 +41,7 @@ callElevator(floorNumber: number): void {
     for (const elevator of this.elevators) {
       // Calculate the time to the current destination if busy
       const timeToCurrentDestination = elevator.isBusy ? elevator.calculateTimeToFloor(elevator.destinationFloors[0]) : 0;
-      // Calculate the time to the requested floor
+     
       const timeToFloor = elevator.calculateTimeToFloor(floorNumber);
       const totalTime = timeToCurrentDestination + timeToFloor;
 

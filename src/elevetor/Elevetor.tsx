@@ -48,50 +48,41 @@ export class Elevator {
       if (this.destinationFloors.length > 0) {
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
-      // Move the elevator to the next floor
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
+      await new Promise(resolve => setTimeout(resolve, 3000))
+
       // Update the current floor
       this.currentFloor = nextFloor;
       this.destinationFloors.shift(); 
-      
-      
-      // Reset busy status
+   
       this.isBusy = false;
       
       // Notify the controller of the state change
       this.elevatorController?.notifyElevatorStateChange();
-      
       this.elevatorController?.handleNextRequest();
-      
-      // Process the next destination if there are still destinations
       this.processNextDestination();
     }
   }
   
  // Calculates the time required to reach a specific floor
  calculateTimeToFloor(floor: number): number {
-  const timePerFloor = 1000; 
-  const stopTimePerFloor = 2000; 
+  const floorHeightPx = 47; 
+  const elevatorSpeedPxPerSecond = 47 / 1 ; 
+  const timePerFloor = (floorHeightPx / elevatorSpeedPxPerSecond) * 1000;
+  const stopTimePerFloor = 2000;
   let totalTime = 0;
 
   if (this.isBusy) {
     let currentFloor = this.currentFloor;
 
-
     for (const dest of this.destinationFloors) {
-   
       totalTime += Math.abs(dest - currentFloor) * timePerFloor;
       currentFloor = dest;
-      
       totalTime += stopTimePerFloor;
     }
     totalTime += Math.abs(floor - currentFloor) * timePerFloor;
 
     return totalTime;
   } else {
-  
-    return Math.abs(this.currentFloor - floor) * timePerFloor;
-  }
+    return Math.abs(this.currentFloor - floor) * timePerFloor;}
 }
 }
