@@ -23,6 +23,7 @@ class FloorDisplay extends Component<Props, State> {
     activeFloors: [],
   };
 
+  // 
   handleCallElevator = (floorNumber: number) => {
     const { elevatorController } = this.props;
     const nearestElevator = elevatorController.findNearestAvailableElevator(floorNumber);
@@ -30,19 +31,18 @@ class FloorDisplay extends Component<Props, State> {
     if (nearestElevator) {
       const timeToArrival = nearestElevator.calculateTimeToFloor(floorNumber);
 
+      // Call the elevator immediately
       elevatorController.callElevator(floorNumber);
 
       const timerEnd = new Date();
       timerEnd.setMilliseconds(timerEnd.getMilliseconds() + timeToArrival);
 
+      // Update state to show the timer
       this.setState((prevState) => ({
         activeFloors: [...prevState.activeFloors, { floorNumber, timerEnd }],
       }));
 
-      if (this.timers[floorNumber]) {
-        clearTimeout(this.timers[floorNumber]);
-      }
-
+      // Remove the floor from the active list after the timer expires
       const timeoutId = setTimeout(() => {
         this.setState((prevState) => ({
           activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
@@ -56,6 +56,7 @@ class FloorDisplay extends Component<Props, State> {
   };
 
   componentWillUnmount() {
+    // Clean up all timeouts when component unmounts
     Object.values(this.timers).forEach(clearTimeout);
   }
 

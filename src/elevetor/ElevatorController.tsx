@@ -1,35 +1,41 @@
+import { Floor } from '../floor/Floor';
 import { Elevator } from './Elevetor';
 
 export class ElevatorController {
   private elevators: Elevator[];
   private requestQueue: number[] = [];
   private stateChangeCallback: (() => void) | null = null;
+  private floors: Floor[];
 
-  // Creates an instance of ElevatorController
-  constructor(elevators: Elevator[]) {
+  constructor(elevators: Elevator[], floors: Floor[]) {
     this.elevators = elevators;
+    this.floors = floors;
     this.elevators.forEach(elevator => elevator.assignController(this));
   }
 
 // Calls an elevator to a specific floor.
-callElevator(floorNumber: number): void {
+callElevator(floorNumber: number): Elevator | void {
   if (this.elevators.some(elevator => elevator.destinationFloors.includes(floorNumber))) {
     return;
   }
 
   const availableElevator = this.findNearestAvailableElevator(floorNumber);
   if (availableElevator) {
-   
     availableElevator.addStopRequest(floorNumber);
     
-    // Check if the elevator should start immediately
     if (!availableElevator.isBusy) {
-      availableElevator.processNextDestination(); // Ensure it starts moving immediately
+      availableElevator.processNextDestination();
     }
-  } else {
-    this.requestQueue.push(floorNumber);
+    
+    return availableElevator; 
   }
-  this.handleNextRequest();
+
+  this.requestQueue.push(floorNumber);
+}
+
+
+getFloorByNumber(floorNumber: number): Floor {
+  return this.floors.find(floor => floor.number === floorNumber)!;
 }
 
 

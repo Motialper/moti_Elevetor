@@ -2,7 +2,7 @@
   margin: 10px;
   width: 33px;
   transform: translate(-50%, var(--elevator-translate-y, 0)); 
-  transition: transform 5s  ease;
+  transition: transform 8s  ease;
 }
 
 .elevator-container{

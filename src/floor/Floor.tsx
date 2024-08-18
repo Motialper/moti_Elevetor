@@ -1,22 +1,22 @@
 import { ElevatorController } from "../elevetor/ElevatorController";
-import { FloorButton } from "./FloorButton";
+import { Elevator } from "../elevetor/Elevetor";
 
 export class Floor {
-  private floorButton: FloorButton;
+  public assignedElevator: Elevator | null = null;
   private elevatorController: ElevatorController;
 
   constructor(public number: number, elevatorController: ElevatorController) {
-    this.floorButton = new FloorButton(number);
     this.elevatorController = elevatorController;
   }
 
-//  Initiates a request for an elevator to come to this floor
+  // Initiates a request for an elevator to come to this floor
   requestElevatorService(): void {
     try {
       if (!this.isElevatorOnFloor(this.number)) {
-        this.elevatorController.callElevator(this.number);
-      } else {
-        console.log(`Elevator is already on floor ${this.number}`);
+        const elevator = this.elevatorController.callElevator(this.number);
+        if (elevator) {
+          this.assignedElevator = elevator;
+        }
       }
     } catch (error) {
       console.error('Error calling elevator:', error);

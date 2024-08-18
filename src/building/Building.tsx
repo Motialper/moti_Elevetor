@@ -12,22 +12,22 @@ export class Building {
   elevators: Elevator[];
   elevatorController: ElevatorController;
 
-//  Creates an instance of Building
+  // Creates an instance of Building
   constructor(numFloors: number, numElevators: number) {
     this.numFloors = numFloors;
     this.numElevators = numElevators;
+    this.floors = this.createFloors(numFloors);
     this.elevators = this.createElevators(numElevators, numFloors);
-    this.elevatorController = new ElevatorController(this.elevators);
-    this.floors = this.createFloors(numFloors, this.elevatorController);
+    this.elevatorController = new ElevatorController(this.elevators, this.floors);
   }
 
-  //  Creates an array of Elevator instances.
+  // Creates an array of Elevator instances.
   private createElevators(numElevators: number, numFloors: number): Elevator[] {
     return Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
   }
 
-//  Creates an array of Floor instances.
-  private createFloors(numFloors: number, elevatorController: ElevatorController): Floor[] {
-    return Array.from({ length: numFloors }, (_, i) => new Floor(i, elevatorController));
+  // Creates an array of Floor instances.
+  private createFloors(numFloors: number): Floor[] {
+    return Array.from({ length: numFloors }, (_, i) => new Floor(i, this.elevatorController));
   }
 }
