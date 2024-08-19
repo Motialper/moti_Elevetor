@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import '../building/BuildingDisplay.css';
 import { Elevator } from './Elevetor';
 import { ElevatorController } from './ElevatorController';
-
-
 import elevatorImage from '../assets/elv.png';
 
 interface Props {
@@ -23,7 +21,7 @@ class ElevatorDisplay extends Component<Props, State> {
       elevators: props.elevators
     };
   }
-
+  
   componentDidMount() {
     this.props.elevatorController.setStateChangeCallback(this.handleStateChange);
   }

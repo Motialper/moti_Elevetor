@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from 'react';
+import React, { useCallback } from 'react';
 import '../building/BuildingDisplay.css';
 import { Building } from '../building/Building';
 import FloorDisplay from '../floor/FloorDisplay';
@@ -8,32 +8,29 @@ interface Props {
   building: Building;
 }
 
-class BuildingDisplay extends Component<Props> {
- 
+const BuildingDisplay: React.FC<Props> = ({ building }) => {
   // Handles the call to request an elevator to a specific floor
-  handleElevatorCall = (floorNumber: number) => {
-    const { building } = this.props;
+  const handleElevatorCall = useCallback((floorNumber: number) => {
     const floor = building.floors.find(f => f.number === floorNumber);
     if (floor) {
       floor.requestElevatorService();
     }
-  };
+  }, [building]);
 
-  render(): ReactNode {
-    const { floors, elevators, elevatorController } = this.props.building;
-
-    return (
-      <div className="building-container">
-        <FloorDisplay
-          floors={floors}
-          callElevator={this.handleElevatorCall} 
-          elevators={elevators}
-          elevatorController={elevatorController}
-        />
-        <ElevatorDisplay elevators={elevators} elevatorController={elevatorController} />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="building-container">
+      <FloorDisplay
+        floors={building.floors}
+        callElevator={handleElevatorCall}
+        elevators={building.elevators}
+        elevatorController={building.elevatorController}
+      />
+      <ElevatorDisplay
+        elevators={building.elevators}
+        elevatorController={building.elevatorController}
+      />
+    </div>
+  );
+};
 
 export default BuildingDisplay;
