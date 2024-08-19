@@ -1,8 +1,10 @@
-
 import { ElevatorController } from "../elevetor/ElevatorController";
 import { Elevator } from "../elevetor/Elevetor";
 import { Floor } from "../floor/Floor";
 
+/**
+ * Represents a building with a number of floors and elevators.
+ */
 export class Building {
   numFloors: number;
   numElevators: number;
@@ -10,20 +12,22 @@ export class Building {
   elevators: Elevator[];
   elevatorController: ElevatorController;
 
+  // Creates an instance of Building
   constructor(numFloors: number, numElevators: number) {
     this.numFloors = numFloors;
     this.numElevators = numElevators;
+    this.floors = this.createFloors(numFloors);
+    this.elevators = this.createElevators(numElevators, numFloors);
+    this.elevatorController = new ElevatorController(this.elevators, this.floors);
+  }
 
-    // תחילה ניצור את המעליות ללא ElevatorController
-    this.elevators = Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors, null));
+  // Creates an array of Elevator instances.
+  private createElevators(numElevators: number, numFloors: number): Elevator[] {
+    return Array.from({ length: numElevators }, (_, i) => new Elevator(i, numFloors));
+  }
 
-    // ניצור את ElevatorController עם המעליות שיצרנו
-    this.elevatorController = new ElevatorController(this, this.elevators);
-
-    // נעדכן את המעליות עם ElevatorController הנכון
-    this.elevators.forEach(elevator => elevator.setController(this.elevatorController));
-
-    // ניצור את הקומות עם ElevatorController הנכון
-    this.floors = Array.from({ length: numFloors }, (_, i) => new Floor(i, this.elevatorController));
+  // Creates an array of Floor instances.
+  private createFloors(numFloors: number): Floor[] {
+    return Array.from({ length: numFloors }, (_, i) => new Floor(i, this.elevatorController));
   }
 }

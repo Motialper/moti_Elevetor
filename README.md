@@ -1,5 +1,3 @@
-# moti_Elevetor
-
 Elevator Control System
 Introduction
 This document describes the design of a software system for controlling elevators in a building. The system manages elevator movements, handles floor requests, and provides a user interface for interacting with the elevators.

@@ -1,54 +1,64 @@
 import React, { Component } from 'react';
-import { useTimer } from 'react-timer-hook';
 import '../building/BuildingDisplay.css';
 import { Floor } from './Floor';
 import { Elevator } from '../elevetor/Elevetor';
 import { ElevatorController } from '../elevetor/ElevatorController';
+import TimerDisplay from '../timer/TimerDisplay';
 
 interface Props {
   floors: Floor[];
-  callElevator: (floorNumber: number) => void;
   elevators: Elevator[];
+  callElevator: (floorNumber: number) => void;
   elevatorController: ElevatorController;
 }
 
 interface State {
-  activeFloors: { floorNumber: number; time: Date }[];
+  activeFloors: { floorNumber: number; timerEnd: Date }[];
 }
 
 class FloorDisplay extends Component<Props, State> {
+  private timers: { [key: number]: NodeJS.Timeout } = {};
+
   state: State = {
     activeFloors: [],
   };
 
+  // 
   handleCallElevator = (floorNumber: number) => {
-    const { callElevator, elevators } = this.props;
+    const { elevatorController } = this.props;
+    const nearestElevator = elevatorController.findNearestAvailableElevator(floorNumber);
 
-    // מציאת המעלית הקרובה ביותר
-    const closestElevator = elevators.reduce((prev, curr) => {
-      const prevTime = prev.calculateTimeToFloor(floorNumber);
-      const currTime = curr.calculateTimeToFloor(floorNumber);
-      return prevTime < currTime ? prev : curr;
-    });
+    if (nearestElevator) {
+      const timeToArrival = nearestElevator.calculateTimeToFloor(floorNumber);
 
-    const timeToArrival = Math.ceil(closestElevator.calculateTimeToFloor(floorNumber) / 1000); // המרה לשניות
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + timeToArrival);
+      // Call the elevator immediately
+      elevatorController.callElevator(floorNumber);
 
-    // התחלת תנועת המעלית מיד
-    callElevator(floorNumber);
+      const timerEnd = new Date();
+      timerEnd.setMilliseconds(timerEnd.getMilliseconds() + timeToArrival);
 
-    this.setState(prevState => ({
-      activeFloors: [...prevState.activeFloors, { floorNumber, time }],
-    }));
-
-    // עדכון הממשק הגרפי לאחר שהמעלית הגיעה
-    setTimeout(() => {
-      this.setState(prevState => ({
-        activeFloors: prevState.activeFloors.filter(floor => floor.floorNumber !== floorNumber),
+      // Update state to show the timer
+      this.setState((prevState) => ({
+        activeFloors: [...prevState.activeFloors, { floorNumber, timerEnd }],
       }));
-    }, timeToArrival * 1000);
+
+      // Remove the floor from the active list after the timer expires
+      const timeoutId = setTimeout(() => {
+        this.setState((prevState) => ({
+          activeFloors: prevState.activeFloors.filter((floor) => floor.floorNumber !== floorNumber),
+        }));
+      }, timeToArrival);
+
+      this.timers[floorNumber] = timeoutId;
+    } else {
+      console.warn('No available elevator');
+    }
   };
+
+  componentWillUnmount() {
+    // Clean up all timeouts when component unmounts
+    Object.values(this.timers).forEach(clearTimeout);
+  }
 
   render() {
     const { floors } = this.props;
@@ -59,42 +69,22 @@ class FloorDisplay extends Component<Props, State> {
         {floors.map((floor, index) => (
           <div key={index} className="floor">
             <button
-              className={`floor-number ${activeFloors.some(f => f.floorNumber === floor.number) ? 'active' : ''}`}
+              className={`floor-number ${activeFloors.some((f) => f.floorNumber === floor.number) ? 'active' : ''}`}
               onClick={() => this.handleCallElevator(floor.number)}
             >
               {floor.number}
             </button>
             <div className="timer-container">
-              {activeFloors.some(f => f.floorNumber === floor.number) && (
-                <Timer expiryTimestamp={activeFloors.find(f => f.floorNumber === floor.number)?.time!} />
+              {activeFloors.some((f) => f.floorNumber === floor.number) && (
+                <TimerDisplay expiryTimestamp={activeFloors.find((f) => f.floorNumber === floor.number)?.timerEnd!} />
               )}
             </div>
             <div className="floor-divider"></div>
           </div>
         ))}
-        <div className="floor-divider"></div>
       </div>
     );
   }
 }
-
-interface TimerProps {
-  expiryTimestamp: Date;
-}
-
-const Timer: React.FC<TimerProps> = ({ expiryTimestamp }) => {
-  const { seconds, minutes, hours, days } = useTimer({ expiryTimestamp, onExpire: () => console.warn('Timer expired') });
-
-  return (
-    <div>
-      <div className='timer'>
-        {days > 0 && <span>{days}:</span>}
-        {hours > 0 && <span>{hours.toString().padStart(2, '0')}:</span>}
-        <span>{minutes.toString().padStart(2, '0')}:</span>
-        <span>{seconds.toString().padStart(2, '0')}</span>
-      </div>
-    </div>
-  );
-};
 
 export default FloorDisplay;
